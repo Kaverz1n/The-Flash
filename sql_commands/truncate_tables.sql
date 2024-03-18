@@ -1,0 +1,5 @@
+TRUNCATE TABLE admins;
+TRUNCATE TABLE maintenance_mode;
+TRUNCATE TABLE rates;
+TRUNCATE TABLE users CASCADE;
+TRUNCATE TABLE orders;

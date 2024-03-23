@@ -6,7 +6,7 @@ from aiogram import Bot, Dispatcher
 
 from dotenv import load_dotenv
 
-from handlers import maintenance_mode, start, restart_bot
+from handlers import maintenance_mode, start, about_company, answers_to_questions
 
 
 async def main() -> None:
@@ -22,7 +22,8 @@ async def main() -> None:
 
     dispatcher.include_router(maintenance_mode.maintenance_router)
     dispatcher.include_router(start.router)
-    dispatcher.include_router(restart_bot.router)
+    dispatcher.include_router(about_company.router)
+    dispatcher.include_router(answers_to_questions.router)
 
     await dispatcher.start_polling(bot)
 

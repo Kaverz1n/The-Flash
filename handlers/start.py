@@ -1,21 +1,33 @@
 import os
 
 from aiogram import Router, F, Bot
-from aiogram.filters import CommandStart
+from aiogram.filters import CommandStart, Command
+from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, CallbackQuery
+from asyncpg import UniqueViolationError
 
 from database.database_handlers.admin import get_admins_telegram_ids
+from database.database_handlers.users import insert_profile_data
 from keyboards.for_start import get_start_keyboard
 
 router = Router()
 
 
 @router.message(CommandStart())
-async def start(message: Message) -> None:
+async def start(message: Message, state: FSMContext) -> None:
     '''
     A handler for the /start command
     '''
+    await state.clear()
+
     user_id = message.from_user.id
+    user_nickname = message.from_user.username
+
+    try:
+        await insert_profile_data(user_id, user_nickname)
+    except UniqueViolationError:
+        pass
+
     admins_telegram_ids = await get_admins_telegram_ids()
 
     await message.answer_photo(
@@ -34,10 +46,12 @@ async def start(message: Message) -> None:
 
 
 @router.callback_query(F.data == 'restart_bot')
-async def restart_bot(callback: CallbackQuery) -> None:
+async def restart_bot(callback: CallbackQuery, state: FSMContext) -> None:
     '''
     A handler for restarting the bot
     '''
+    await state.clear()
+
     user_id = callback.from_user.id
     admins_telegram_ids = await get_admins_telegram_ids()
 
@@ -53,12 +67,37 @@ async def restart_bot(callback: CallbackQuery) -> None:
     )
 
 
-@router.callback_query(F.data == 'back_to_menu')
-async def back_to_menu(callback: CallbackQuery, bot: Bot) -> None:
+@router.callback_query(F.data == 'return_main_menu')
+async def return_main_menu(callback: CallbackQuery, state: FSMContext) -> None:
     '''
-    A handler for to back to main menu
+    A handler for returning to the main menu
     '''
-    await bot.delete_message(
-        chat_id=callback.message.chat.id,
-        message_id=callback.message.message_id
+    await state.clear()
+
+    user_id = callback.from_user.id
+    admins_telegram_ids = await get_admins_telegram_ids()
+
+    await callback.message.answer_photo(
+        photo=os.getenv('MAIN_PHOTO_ID'),
+        caption='⚡\u00A0<b>THE FLASH</b>\u00A0⚡\n\n💖\u00A0УДАЧНЫХ ПОКУПОК\u00A0💖',
+        reply_markup=get_start_keyboard(user_id=user_id, admins_telegram_ids=admins_telegram_ids)
+    )
+
+    await callback.answer()
+
+
+@router.message(Command('restart_bot'))
+async def return_main_menu(message: Message, state: FSMContext) -> None:
+    '''
+    A handler for returning to the main menu
+    '''
+    await state.clear()
+
+    user_id = message.from_user.id
+    admins_telegram_ids = await get_admins_telegram_ids()
+
+    await message.answer_photo(
+        photo=os.getenv('MAIN_PHOTO_ID'),
+        caption='⚡\u00A0<b>THE FLASH</b>\u00A0⚡\n\n💖\u00A0УДАЧНЫХ ПОКУПОК\u00A0💖',
+        reply_markup=get_start_keyboard(user_id=user_id, admins_telegram_ids=admins_telegram_ids)
     )

@@ -1,4 +1,4 @@
-from aiogram.types import InlineKeyboardMarkup
+from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 
@@ -27,3 +27,18 @@ def get_start_keyboard(user_id: int, admins_telegram_ids: list) -> InlineKeyboar
     keyboard_builder.adjust(1)
 
     return keyboard_builder.as_markup()
+
+
+def get_return_to_menu_keyboard() -> InlineKeyboardMarkup:
+    '''
+    A keyboard that consists of only one button to return to the main menu
+    '''
+    back_button = [
+        [InlineKeyboardButton(text='Вернуться в главное меню', callback_data='return_main_menu')]
+    ]
+
+    keyboard = InlineKeyboardMarkup(
+        inline_keyboard=back_button,
+    )
+
+    return keyboard

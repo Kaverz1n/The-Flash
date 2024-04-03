@@ -5,7 +5,7 @@ from aiogram.types import CallbackQuery
 from aiogram.utils.markdown import hide_link
 
 from database.database_handlers.rates import get_course_and_commission
-from keyboards.back_to_menu import get_back_to_menu_keyboard
+from keyboards.back import get_back_keyboard
 
 router = Router()
 
@@ -55,6 +55,6 @@ async def answers_to_questions(callback: CallbackQuery) -> None:
              f'<b>гарантирует</b>, что вы получите только <b>оригинальные</b> товары.\n\n<b>POIZON (DEWU)</b> '
              f'также предоставляет <b>сертификаты</b> подлинности и специальные <b>клипсы</b> для '
              f'дополнительной уверенности покупателей.',
-        reply_markup=get_back_to_menu_keyboard()
+        reply_markup=get_back_keyboard()
     )
     await callback.answer()

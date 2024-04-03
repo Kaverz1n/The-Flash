@@ -21,7 +21,7 @@ CREATE TABLE users
 (
 	user_id serial,
 	user_telegram_id int NOT NULL UNIQUE,
-	user_nickname varchar(32) NOT NULL UNIQUE,
+	user_nickname varchar(32) NOT NULL,
 	user_name varchar(20) NOT NULL,
 	user_surname varchar(20) NOT NULL,
 	user_patronymic varchar(20) NOT NULL,
@@ -41,6 +41,7 @@ CREATE TABLE orders
 	yuan_price int NOT NULL,
 	rub_price int NOT NULL,
 	order_photo_id text NOT NULL,
+	order_size varchar(10) NOT NULL,
 	user_id int NOT NULL,
 
 	CONSTRAINT pk_orders_order_id PRIMARY KEY (order_id),

@@ -4,7 +4,7 @@ from aiogram import Router, F
 from aiogram.types import CallbackQuery
 from aiogram.utils.markdown import hide_link
 
-from keyboards.back_to_menu import get_back_to_menu_keyboard
+from keyboards.back import get_back_keyboard
 
 router = Router()
 
@@ -52,6 +52,6 @@ async def about_company(callback: CallbackQuery) -> None:
              f'с нашей командой поддержки, нажав соответсвующую кнопку в главном меню, или '
              f'по указанным ниже контактам:\n\n<b>E-mail:</b> theflash@gmail.com\n'
              f'<b>Администратор:</b> @Kaverz1n',
-        reply_markup=get_back_to_menu_keyboard()
+        reply_markup=get_back_keyboard()
     )
     await callback.answer()

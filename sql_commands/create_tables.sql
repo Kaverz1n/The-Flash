@@ -43,6 +43,7 @@ CREATE TABLE orders
 	order_photo_id text NOT NULL,
 	order_size varchar(10) NOT NULL,
 	user_id int NOT NULL,
+	chat_telegram_id int NOT NULL,
 
 	CONSTRAINT pk_orders_order_id PRIMARY KEY (order_id),
 	CONSTRAINT fk_orders_user_id FOREIGN KEY(user_id) REFERENCES users(user_id)

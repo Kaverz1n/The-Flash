@@ -7,7 +7,7 @@ from aiogram import Bot, Dispatcher
 from dotenv import load_dotenv
 
 from handlers import maintenance_mode, start, about_company, answers_to_questions, price_calculator, profile, \
-    different_handlers
+    different_handlers, to_order
 
 
 async def main() -> None:
@@ -23,6 +23,7 @@ async def main() -> None:
 
     dispatcher.include_router(maintenance_mode.maintenance_router)
     dispatcher.include_router(start.router)
+    dispatcher.include_router(to_order.router)
     dispatcher.include_router(about_company.router)
     dispatcher.include_router(answers_to_questions.router)
     dispatcher.include_router(price_calculator.router)

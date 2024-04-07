@@ -80,3 +80,39 @@ async def select_profile_data(user_telegram_id: int) -> tuple:
     await connection.close()
 
     return result[0]
+
+
+async def select_user_pk(user_telegram_id: int) -> tuple:
+    '''
+    An async function to select user_pk from the users table
+    :param user_telegram_id: user's telegram id
+    :return:
+    '''
+    database_data = get_database_data()
+    connection = await asyncpg.connect(**database_data)
+
+    result = await connection.fetch(
+        'SELECT user_id FROM users WHERE user_telegram_id = $1;',
+        user_telegram_id
+    )
+
+    await connection.close()
+
+    return result[0]
+
+
+async def increase_current_orders(user_telegram_id: int) -> None:
+    '''
+    An async function to increase current orders in the users table
+    :param user_telegram_id: user's telegram id
+    '''
+    database_data = get_database_data()
+    connection = await asyncpg.connect(**database_data)
+
+    await connection.execute(
+        'UPDATE users SET current_orders = current_orders + 1 '
+        'WHERE user_telegram_id = $1;',
+        user_telegram_id
+    )
+
+    await connection.close()

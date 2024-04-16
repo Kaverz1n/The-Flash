@@ -8,7 +8,7 @@ from aiogram.utils.media_group import MediaGroupBuilder
 from aiohttp import ClientSession, InvalidURL
 
 from database.database_handlers.orders import insert_order_data
-from database.database_handlers.rates import get_course_and_commission
+from database.database_handlers.rates import get_rate_and_commission
 from database.database_handlers.users import select_profile_data, select_user_pk, increase_current_orders
 from keyboards.for_profile import get_profile_keyboard
 from keyboards.for_start import get_return_to_menu_keyboard
@@ -240,7 +240,7 @@ async def order_price_received(message: Message, state: FSMContext) -> None:
     '''
     order_data = await state.get_data()
     user_data = await select_profile_data(message.from_user.id)
-    rate, commission = await get_course_and_commission()
+    rate, commission = await get_rate_and_commission()
 
     if isinstance(rate, (int, float)) and isinstance(commission, (int, float)):
         full_price = int((int(message.text) * rate + commission))

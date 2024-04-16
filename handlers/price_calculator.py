@@ -3,8 +3,8 @@ from aiogram.filters import StateFilter
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery, Message
 
-from database.database_handlers.rates import get_course_and_commission
-from keyboards.back import get_back_keyboard
+from database.database_handlers.rates import get_rate_and_commission
+from keyboards.for_back import get_back_keyboard
 from keyboards.for_start import get_return_to_menu_keyboard
 from states.price_calculator import PriceCalculatorState
 
@@ -33,7 +33,7 @@ async def price_calculated(message: Message, state: FSMContext) -> None:
     '''
     A handler for showing converted good's price
     '''
-    rate, commission = await get_course_and_commission()
+    rate, commission = await get_rate_and_commission()
 
     if isinstance(rate, (int, float)) and isinstance(commission, (int, float)):
         full_price = int((int(message.text) * rate + commission))

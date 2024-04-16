@@ -3,7 +3,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery, Message
 
 from database.database_handlers.users import select_profile_data, update_profile_data
-from keyboards.back import get_back_keyboard
+from keyboards.for_back import get_back_keyboard
 from keyboards.for_profile import get_profile_keyboard, get_edit_profile_keyboard, get_back_to_profile_keyboard
 from keyboards.for_start import get_return_to_menu_keyboard
 from states.profile import ProfileState

@@ -6,7 +6,9 @@ def get_familiarizing_keyboard() -> InlineKeyboardMarkup:
     A keyboard that consists of one button to familiarize with the ordering
     '''
     button = [
-        [InlineKeyboardButton(text='✅\u00A0Я ознакомился\u00A0✅', callback_data='familiarized')]
+        [InlineKeyboardButton(text='✅\u00A0Я ознакомился\u00A0✅', callback_data='familiarized')],
+        [InlineKeyboardButton(text='📖\u00A0Инструкция по оформлению заказа\u00A0📖', callback_data='how_to_order')],
+        [InlineKeyboardButton(text='Назад', callback_data='back')]
     ]
 
     keyboard = InlineKeyboardMarkup(

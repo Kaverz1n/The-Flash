@@ -4,7 +4,7 @@ from aiogram import Router, F
 from aiogram.types import CallbackQuery
 from aiogram.utils.markdown import hide_link
 
-from keyboards.back import get_back_keyboard
+from keyboards.for_back import get_back_keyboard
 
 router = Router()
 

@@ -12,7 +12,7 @@ CREATE TABLE rates
 	rate_id smallserial,
 	rate_code varchar(3) NOT NULL UNIQUE,
 	rate_value real NOT NULL,
-	commission smallint NOT NULL,
+	commission real NOT NULL,
 
 	CONSTRAINT pk_rates_rate_id PRIMARY KEY (rate_id)
 );

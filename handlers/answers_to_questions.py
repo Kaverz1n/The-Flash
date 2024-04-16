@@ -4,8 +4,8 @@ from aiogram import Router, F
 from aiogram.types import CallbackQuery
 from aiogram.utils.markdown import hide_link
 
-from database.database_handlers.rates import get_course_and_commission
-from keyboards.back import get_back_keyboard
+from database.database_handlers.rates import get_rate_and_commission
+from keyboards.for_back import get_back_keyboard
 
 router = Router()
 
@@ -15,7 +15,7 @@ async def answers_to_questions(callback: CallbackQuery) -> None:
     '''
     A handler for showing answers to popular questions
     '''
-    rate, commission = await get_course_and_commission()
+    rate, commission = await get_rate_and_commission()
 
     await callback.message.answer(
         text=f'{hide_link(os.getenv("FULL_LOGO_URL"))}'
@@ -26,7 +26,7 @@ async def answers_to_questions(callback: CallbackQuery) -> None:
              f'от <b>местоположения</b> получателя.\n\n'
              f'❓\u00A0<b>КАКОЙ КУРС ЮАНЯ И КОМИССИЯ?</b>\n\n'
              f'✅\u00A0Курс юаня и комиссия компании <b>The Flash</b> являются <b>фиксированными</b>. '
-             f'\n\n<b>Курс юаня</b>: {rate} руб.\n<b>Комиссия</b>: {commission} руб.\n\n'
+             f'\n\n<b>Курс юаня</b>: {round(rate, 2)} руб.\n<b>Комиссия</b>: {round(commission, 2)} руб.\n\n'
              f'❓\u00A0<b>КАК ПРОИСХОДИТ ДОСТАВКА ПО РОССИИ И МИRU?</b>\n\n'
              f'✅\u00A0Cервисы доставки товаров по <b>России</b> и <b>миру</b>:'
              f'\n\n<b>По России</b>: Мы используем <b>надежный</b> и <b>проверенный</b> '

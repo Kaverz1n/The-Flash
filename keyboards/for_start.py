@@ -22,7 +22,7 @@ def get_start_keyboard(user_id: int, admins_telegram_ids: list) -> InlineKeyboar
         keyboard_builder.button(text=text, callback_data=callback_data)
 
     if user_id in admins_telegram_ids:
-        keyboard_builder.button(text='🥷\u00A0АДМИНКА\u00A0🥷', callback_data='to_admin_panel')
+        keyboard_builder.button(text='🥷\u00A0АДМИНКА\u00A0🥷', callback_data='admin_panel')
 
     keyboard_builder.adjust(1)
 

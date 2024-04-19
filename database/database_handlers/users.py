@@ -116,3 +116,21 @@ async def increase_current_orders(user_telegram_id: int) -> None:
     )
 
     await connection.close()
+
+
+async def cancel_user_order(user_telegram_id: int) -> None:
+    '''
+    An async function to cancel user order in the users table
+    :param user_telegram_id: user's telegram id
+    '''
+    database_data = get_database_data()
+    connection = await asyncpg.connect(**database_data)
+
+    await connection.execute(
+        'UPDATE users SET current_orders = current_orders - 1,'
+        'canceled_orders = canceled_orders + 1 '
+        'WHERE user_telegram_id = $1;',
+        user_telegram_id
+    )
+
+    await connection.close()

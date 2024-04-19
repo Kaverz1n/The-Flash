@@ -8,6 +8,9 @@ class AdminPanelState(StatesGroup):
     password = State()
     authorized = State()
 
+class AdminCheckOrdersState(StatesGroup):
+    get_orders_inf = State()
+    order_id = State()
 
 class AdminChangeRateState(StatesGroup):
     '''

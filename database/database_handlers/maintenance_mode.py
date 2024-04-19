@@ -16,7 +16,10 @@ async def get_maintenance_mode_value() -> bool:
 
     await connection.close()
 
-    maintenance_mode_value = result[0]
+    try:
+        maintenance_mode_value = result[0]
+    except TypeError:
+        maintenance_mode_value = False
 
     return maintenance_mode_value
 

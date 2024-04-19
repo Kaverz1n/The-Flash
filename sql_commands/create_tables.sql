@@ -34,6 +34,14 @@ CREATE TABLE users
 	CONSTRAINT pk_users_user_id PRIMARY KEY (user_id)
 );
 
+CREATE TABLE order_statuses
+(
+	order_status_id serial,
+	order_status_name varchar (10),
+
+	CONSTRAINT pk_order_statuses_order_status_id PRIMARY KEY (order_status_id)
+);
+
 CREATE TABLE orders
 (
 	order_id serial,
@@ -44,9 +52,11 @@ CREATE TABLE orders
 	order_size varchar(10) NOT NULL,
 	user_id int NOT NULL,
 	chat_telegram_id int NOT NULL,
+	order_status_id int NOT NULL,
 
 	CONSTRAINT pk_orders_order_id PRIMARY KEY (order_id),
-	CONSTRAINT fk_orders_user_id FOREIGN KEY(user_id) REFERENCES users(user_id)
+	CONSTRAINT fk_orders_user_id FOREIGN KEY(user_id) REFERENCES users(user_id),
+	CONSTRAINT fk_orders_order_status_id FOREIGN KEY (order_status_id) REFERENCES order_status (order_status_id)
 );
 
 CREATE TABLE maintenance_mode

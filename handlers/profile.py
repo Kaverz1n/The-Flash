@@ -1,10 +1,11 @@
-from aiogram import Router, F
+from aiogram import Router, F, Bot
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery, Message
 
 from database.database_handlers.users import select_profile_data, update_profile_data
 from keyboards.for_back import get_back_keyboard
-from keyboards.for_profile import get_profile_keyboard, get_edit_profile_keyboard, get_back_to_profile_keyboard
+from keyboards.for_profile import get_profile_keyboard, get_edit_profile_keyboard, get_back_to_profile_keyboard, \
+    get_back_to_edit_keyboard
 from keyboards.for_start import get_return_to_menu_keyboard
 from states.profile import ProfileState
 from utils import is_correct_address
@@ -69,7 +70,7 @@ async def user_name(callback: CallbackQuery, state: FSMContext) -> None:
         text='✏️\u00A0РЕДАКТИРОВАНИЕ ИМЕНИ\u00A0✏️\n\n'
              'Пожалуйста, введите Ваше <b>полное настоящее имя</b>. Оно необходимо '
              'для <b>оформления заказа</b>:',
-        reply_markup=get_back_keyboard()
+        reply_markup=get_back_to_edit_keyboard()
     )
     await callback.answer()
 
@@ -115,7 +116,7 @@ async def user_surname(callback: CallbackQuery, state: FSMContext) -> None:
         text='✏️\u00A0<b>РЕДАКТИРОВАНИЕ ФАМИЛИИ</b>\u00A0✏️\n\n'
              'Пожалуйста, введите Вашу <b>настоящую фамилию</b>. Она необходима '
              'для <b>оформления заказа</b>:',
-        reply_markup=get_back_keyboard()
+        reply_markup=get_back_to_edit_keyboard()
     )
     await callback.answer()
 
@@ -161,7 +162,7 @@ async def user_patronymic(callback: CallbackQuery, state: FSMContext) -> None:
         text='✏️\u00A0<b>РЕДАКТИРОВАНИЕ ОТЧЕСТВА</b>\u00A0✏️\n\n'
              'Пожалуйста, введите Ваше <b>настоящее отчество</b>. Оно необходимо '
              'для <b>оформления заказа</b>:',
-        reply_markup=get_back_keyboard()
+        reply_markup=get_back_to_edit_keyboard()
     )
     await callback.answer()
 
@@ -207,7 +208,7 @@ async def user_phone(callback: CallbackQuery, state: FSMContext) -> None:
         text='✏️\u00A0<b>РЕДАКТИРОВАНИЕ НОМЕРА ТЕЛЕФОНА</b>\u00A0✏️\n\n'
              'Пожалуйста, введите Ваш <b>текущий номер телефона</b> в формате '
              '<b>+79999999999</b>. Он необходим для <b>оформления заказа</b>:',
-        reply_markup=get_back_keyboard()
+        reply_markup=get_back_to_edit_keyboard()
     )
     await callback.answer()
 
@@ -262,7 +263,7 @@ async def delivery_address(callback: CallbackQuery, state: FSMContext) -> None:
              '<i>Указанный метод применим только для доставки в Россию. Если вы находитесь за '
              'пределами России, пожалуйста, свяжитесь с менеджером по контактным данным, '
              'указанным на странице о компании, или обратитесь в службу поддержки.</i>',
-        reply_markup=get_back_keyboard()
+        reply_markup=get_back_to_edit_keyboard()
     )
     await callback.answer()
 
@@ -347,3 +348,15 @@ async def save_profile(callback: CallbackQuery, state: FSMContext) -> None:
         text='Данные успешно сохранены\u00A0✏️',
         show_alert=True
     )
+
+
+@router.callback_query(F.data == 'back_to_edit_profile')
+async def back_to_edit_profile(callback: CallbackQuery, bot: Bot, state: FSMContext) -> None:
+    '''
+    A handler for to get back to edit the profile
+    '''
+    await bot.delete_message(
+        chat_id=callback.message.chat.id,
+        message_id=callback.message.message_id
+    )
+    await callback.answer()

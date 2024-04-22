@@ -6,19 +6,22 @@ from aiogram.types import CallbackQuery, Message, ReplyKeyboardRemove, FSInputFi
 
 from callback_factories.order_factory import OrderCallbackFactory
 from database.database_handlers.admin import insert_admin_data, get_admins_telegram_ids, delete_from_admins, \
-    select_admin_password
+    select_admin_password, get_admins_information
 from database.database_handlers.maintenance_mode import get_maintenance_mode_value, set_maintenance_mode_value
-from database.database_handlers.orders import get_order_inf, update_order_status
+from database.database_handlers.orders import get_order_inf, update_order_status, get_orders_information
 from database.database_handlers.rates import get_rate_and_commission, update_rate, update_commission
+from database.database_handlers.tech_support import insert_tech_support_data, delete_from_tech_support, \
+    get_tech_support_nicknames, get_tech_support_information
 from database.database_handlers.users import cancel_user_order
+from filters.tech_support_filter import NotStartWith
 from handlers.start import return_main_menu
 from keyboards.for_admin_panel import get_admin_panel_keyboard, get_back_admin_keyboard, get_check_orders_keyboard, \
     change_order_status_keyboard
 from keyboards.for_back import get_back_keyboard
 from keyboards.for_start import get_return_to_menu_keyboard
 from states.admin_panel import AdminPanelState, AdminChangeRateState, AdminChangeCommissionState, AdminAddAdminState, \
-    AdminDeleteAdminState, AdminCheckOrdersState
-from utils import create_order_inf_file
+    AdminDeleteAdminState, AdminCheckOrdersState, AdminAddTechSupportState, AdminDeleteTechSupportState
+from utils import create_inf_file
 
 router = Router()
 
@@ -101,9 +104,17 @@ async def get_excel_orders_data(message: Message) -> None:
     '''
     A handler for getting excel orders data
     '''
-    await create_order_inf_file()
+    order_inf_list = await get_orders_information()
 
-    excel_file = FSInputFile('templates/excel_template.xlsx')
+    await create_inf_file(
+        order_inf_list,
+        [
+            'id заказа', 'ссылка', 'цена в юан.', 'цена в руб.', 'id фото', 'размер',
+            'telegram-id заказчика', 'telegram-id чата с заказчиком', 'статус заказа'
+        ]
+    )
+
+    excel_file = FSInputFile('templates/data.xlsx')
 
     await message.answer_document(
         excel_file,
@@ -305,6 +316,54 @@ async def commission_admin_received(message: Message, state: FSMContext) -> None
 
 
 @router.message(
+    F.text == '🧑‍💼\u00A0Получить данные об админах\u00A0🧑‍💼',
+    AdminPanelState.authorized
+)
+async def get_excel_admin_data(message: Message) -> None:
+    '''
+    A handler for getting the admin data in Excel format
+    '''
+    admins_data_list = await get_admins_information()
+
+    await create_inf_file(
+        admins_data_list,
+        ['ID администратора', 'Telegram-ID администратора', 'Пароль администратора']
+    )
+
+    excel_file = FSInputFile('templates/data.xlsx')
+
+    await message.answer_document(
+        excel_file,
+        caption='🧑‍💼\u00A0ДАННЫЕ ОБ АДМИНАХ\u00A0🧑‍💼\n\n'
+                'Данные предоставлены в виде <b>Excel-таблицы</b>. '
+    )
+
+
+@router.message(
+    F.text == '👨‍💼\u00A0Получить данные о техподдержке\u00A0👨‍💼',
+    AdminPanelState.authorized
+)
+async def get_excel_tech_support_data(message: Message) -> None:
+    '''
+    A handler for getting the tech support data in Excel format
+    '''
+    tech_support_data_list = await get_tech_support_information()
+
+    await create_inf_file(
+        tech_support_data_list,
+        ['ID техподдержки', 'Никнейм аккаунта техподдержки']
+    )
+
+    excel_file = FSInputFile('templates/data.xlsx')
+
+    await message.answer_document(
+        excel_file,
+        caption='👨‍💼\u00A0ДАННЫЕ ОБ ТЕХПОДДЕРЖКЕ\u00A0👨‍💼‍\n\n'
+                'Данные предоставлены в виде <b>Excel-таблицы</b>. '
+    )
+
+
+@router.message(
     F.text == '🥷\u00A0Добавить админа\u00A0🥷',
     AdminPanelState.authorized
 )
@@ -446,13 +505,134 @@ async def delete_admin_data_received(message: Message, state: FSMContext) -> Non
 @router.message(
     AdminDeleteAdminState.admin_telegram_id
 )
-async def wrong_delete_admin_data(message: Message, state: FSMContext) -> None:
+async def wrong_delete_admin_data(message: Message) -> None:
     '''
     A handler for wrong admin data
     '''
     await message.answer(
         text='❌\u00A0<b>ПРОИЗОШЛА ОШИБКА</b>\u00A0❌\n\n'
              'Во время <b>удаления</b> администратора произошла ошибка. '
+             'Пожалуйста, <b>попробуйте</b> еще раз:',
+        reply_markup=get_back_admin_keyboard()
+    )
+
+
+@router.message(
+    F.text == '🧑‍💻\u00A0Добавить техподдержку\u00A0🧑‍💻',
+    AdminPanelState.authorized
+)
+async def add_tech_support(message: Message, state: FSMContext) -> None:
+    '''
+    A handler for adding a tech support
+    '''
+    await state.set_state(AdminAddTechSupportState.tech_support_nickname)
+
+    await message.answer(
+        text='🧑‍💻\u00A0<b>ДОБАВЛЕНИЕ ТЕХПОДДЕРЖКИ</b>\u00A0🧑‍💻\n\n'
+             f'Для добавления <b>техподдержки</b> введите <b>телеграм-ник</b>:\n\n'
+             f'<i>Телеграм-никнейм должен быть без знака "@". Пример: Kaverz1n</i>'
+    )
+
+
+@router.message(
+    F.text,
+    NotStartWith(),
+    AdminAddTechSupportState.tech_support_nickname
+)
+async def teach_support_data_received(message: Message, state: FSMContext) -> None:
+    '''
+    A handler for successful adding tech support data
+    '''
+    try:
+        await insert_tech_support_data(message.text)
+
+        await message.answer(
+            text='✅\u00A0<b>ТЕХПОДДЕРЖКА ДОБАВЛЕНА</b>\u00A0✅\n\n'
+                 f'Техподдержка успешно <b>добавлена</b>!\n\n'
+                 f'Вы можете продолжить работу в <b>админ. панели</b>, используя <b>специальные кнопки</b>.',
+        )
+
+        await state.set_state(AdminPanelState.authorized)
+    except:
+        await message.answer(
+            text='❌\u00A0<b>ПРОИЗОШЛА ОШИБКА</b>\u00A0❌\n\n'
+                 'Во время <b>добавления</b> техподдержки произошла ошибка. '
+                 'Пожалуйста, <b>попробуйте</b> еще раз:',
+            reply_markup=get_back_admin_keyboard()
+        )
+
+
+@router.message(
+    AdminAddTechSupportState.tech_support_nickname
+)
+async def wrong_add_tech_support_data(message: Message, state: FSMContext) -> None:
+    '''
+    A handler for wrong tech support data
+    '''
+    await message.answer(
+        text='❌\u00A0<b>ПРОИЗОШЛА ОШИБКА</b>\u00A0❌\n\n'
+             'Во время <b>добавления</b> техподдержки произошла ошибка. '
+             'Пожалуйста, <b>попробуйте</b> еще раз:',
+        reply_markup=get_back_admin_keyboard()
+    )
+
+
+@router.message(
+    F.text == '🙅\u00A0Удалить техподдержку\u00A0🙅',
+    AdminPanelState.authorized
+)
+async def delete_tech_support(message: Message, state: FSMContext) -> None:
+    '''
+    A handler for deleting a tech support
+    '''
+    await state.set_state(AdminDeleteTechSupportState.tech_support_nickname)
+
+    await message.answer(
+        text='🙅\u00A0<b>УДАЛЕНИЕ ТЕХПОДДЕРЖКИ</b>\u00A0🙅\n\n'
+             f'Для удаления <b>техподдержки</b> введите <b>телеграм-ник</b>:\n\n'
+             f'<i>Телеграм-никнейм должен быть без знака "@". Пример: Kaverz1n</i>'
+    )
+
+
+@router.message(
+    F.text,
+    AdminDeleteTechSupportState.tech_support_nickname
+)
+async def teach_support_data_received(message: Message, state: FSMContext) -> None:
+    '''
+    A handler for successful deleting a tech support
+    '''
+    tech_support_nicknames = await get_tech_support_nicknames()
+
+    if message.text in tech_support_nicknames:
+        await delete_from_tech_support(message.text)
+
+        await message.answer(
+            text='✅\u00A0<b>ТЕХПОДДЕРЖКА УДАЛЕНА</b>\u00A0✅\n\n'
+                 f'Техподдержка успешно <b>добавлена</b>!\n\n'
+                 f'Вы можете продолжить работу в <b>админ. панели</b>, используя <b>специальные кнопки</b>.',
+        )
+
+        await state.set_state(AdminPanelState.authorized)
+    else:
+        await message.answer(
+            text='❌\u00A0<b>ПРОИЗОШЛА ОШИБКА</b>\u00A0❌\n\n'
+                 'Во время <b>удаления</b> техподдержки произошла ошибка. '
+                 'Пожалуйста, <b>попробуйте</b> еще раз:',
+            reply_markup=get_back_admin_keyboard()
+        )
+
+
+@router.message(
+    AdminDeleteTechSupportState.tech_support_nickname
+)
+async def wrong_delete_tech_support_data(message: Message, state: FSMContext) -> None:
+    '''
+    A handler for wrong tech support data
+    '''
+    await message.answer(
+        text='❌\u00A0<b>ПРОИЗОШЛА ОШИБКА</b>\u00A0❌\n\n'
+             'Во время <b>удаления</b> техподдержки произошла ошибка. '
              'Пожалуйста, <b>попробуйте</b> еще раз:',
         reply_markup=get_back_admin_keyboard()
     )

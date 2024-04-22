@@ -66,3 +66,9 @@ CREATE TABLE maintenance_mode
 
 	CONSTRAINT pk_maintenance_mode_maintenance_mode_id PRIMARY KEY(maintenance_mode_id)
 );
+
+CREATE TABLE tech_support
+(
+	tech_support_id serial,
+	tech_support_telegram_nickname VARCHAR(32) UNIQUE
+);

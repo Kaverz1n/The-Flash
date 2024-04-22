@@ -3,6 +3,21 @@ import asyncpg
 from database.database_settings.database_data import get_database_data
 
 
+async def get_admins_information() -> list:
+    '''
+    An async function to get admin data
+    '''
+    database_data = get_database_data()
+    connection = await asyncpg.connect(**database_data)
+
+    result = await connection.fetch(
+        'SELECT * FROM admins;'
+    )
+
+    await connection.close()
+
+    return result
+
 async def get_admins_telegram_ids() -> list:
     '''
     An async function to get the list of admins' telegram_ids

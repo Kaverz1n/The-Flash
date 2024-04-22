@@ -17,17 +17,20 @@ def get_admin_panel_keyboard(maintenance_mode: bool, admin_telegram_id: int) -> 
         [KeyboardButton(text='💴\u00A0Изменить курс юаня\u00A0💴')],
         [KeyboardButton(text='💵\u00A0Изменить комиссию\u00A0💵')],
         [KeyboardButton(text='🥷\u00A0Добавить админа\u00A0🥷')],
+        [KeyboardButton(text='🧑‍💻\u00A0Добавить техподдержку\u00A0🧑‍💻')],
+        [KeyboardButton(text='🙅\u00A0Удалить техподдержку\u00A0🙅')],
+        [KeyboardButton(text='🚪\u00A0Выйти из админ. панели\u00A0🚪')]
     ]
 
     if admin_telegram_id == int(os.getenv('MAIN_ADMIN_TELEGRAM_ID')):
-        buttons.append([KeyboardButton(text='🧟‍♂️\u00A0Удалить админа\u00A0🧟‍♂️')])
+        buttons.insert(3, [KeyboardButton(text='🧑‍💼\u00A0Получить данные об админах\u00A0🧑‍💼')])
+        buttons.insert(5, [KeyboardButton(text='🧟‍♂️\u00A0Удалить админа\u00A0🧟‍♂️')])
+        buttons.insert(6, [KeyboardButton(text='👨‍💼\u00A0Получить данные о техподдержке\u00A0👨‍💼')])
 
     if maintenance_mode:
-        buttons.append([KeyboardButton(text='🔧\u00A0Выкл. режим тех.обслуживания\u00A0🔧')])
+        buttons.insert(9, [KeyboardButton(text='🔧\u00A0Выкл. режим тех.обслуживания\u00A0🔧')])
     else:
-        buttons.append([KeyboardButton(text='🔧\u00A0Вкл. режим тех.обслуживания\u00A0🔧')])
-
-    buttons.append([KeyboardButton(text='🚪\u00A0Выйти из админ. панели\u00A0🚪')])
+        buttons.insert(9, [KeyboardButton(text='🔧\u00A0Вкл. режим тех.обслуживания\u00A0🔧')])
 
     keyboard = ReplyKeyboardMarkup(
         keyboard=buttons,

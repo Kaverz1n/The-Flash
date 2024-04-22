@@ -8,9 +8,14 @@ class AdminPanelState(StatesGroup):
     password = State()
     authorized = State()
 
+
 class AdminCheckOrdersState(StatesGroup):
+    '''
+    A class including the state of the checking orders
+    '''
     get_orders_inf = State()
     order_id = State()
+
 
 class AdminChangeRateState(StatesGroup):
     '''
@@ -39,3 +44,17 @@ class AdminDeleteAdminState(StatesGroup):
     A class including the state of the deleting admin
     '''
     admin_telegram_id = State()
+
+
+class AdminAddTechSupportState(StatesGroup):
+    '''
+    A class including the state of the adding tech support
+    '''
+    tech_support_nickname = State()
+
+
+class AdminDeleteTechSupportState(StatesGroup):
+    '''
+    A class including the state of the deleting tech support
+    '''
+    tech_support_nickname = State()

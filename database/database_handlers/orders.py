@@ -55,7 +55,7 @@ async def insert_order_data(
     await connection.close()
 
 
-async def get_orders_inf() -> list:
+async def get_orders_information() -> list:
     '''
     An async function to get orders data
     '''

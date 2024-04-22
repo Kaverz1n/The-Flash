@@ -7,7 +7,7 @@ from aiogram import Bot, Dispatcher
 from dotenv import load_dotenv
 
 from handlers import maintenance_mode, start, about_company, answers_to_questions, price_calculator, profile, \
-    different_handlers, to_order, how_to_order, cancel_order, admin_panel
+    different_handlers, to_order, how_to_order, cancel_order, admin_panel, tech_support
 
 
 async def main() -> None:
@@ -30,6 +30,7 @@ async def main() -> None:
     dispatcher.include_router(answers_to_questions.router)
     dispatcher.include_router(price_calculator.router)
     dispatcher.include_router(profile.router)
+    dispatcher.include_router(tech_support.router)
     dispatcher.include_router(admin_panel.router)
     dispatcher.include_router(different_handlers.router)
 

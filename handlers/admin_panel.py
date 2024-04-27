@@ -258,7 +258,7 @@ async def change_rate_admin(message: Message, state: FSMContext) -> None:
 
     await message.answer(
         text='💴\u00A0<b>ИЗМЕНЕНИЕ КУРСА ЮАНЯ</b>\u00A0💴\n\n'
-             f'<b>Текущий курс юаня</b>: {round(course, 2)} руб.\n\n'
+             f'<b>Текущий курс юаня</b>: {course} руб.\n\n'
              f'Укажите новое значение:',
         reply_markup=get_back_admin_keyboard()
     )
@@ -304,7 +304,7 @@ async def change_commission_admin(message: Message, state: FSMContext) -> None:
 
     await message.answer(
         text='💵\u00A0<b>ИЗМЕНЕНИЕ КОМИССИИ СЕРВИСА</b>\u00A0💵\n\n'
-             f'<b>Текущая комиссия сервиса</b>: {round(commission, 2)} руб.\n\n'
+             f'<b>Текущая комиссия сервиса</b>: {commission} руб.\n\n'
              f'Укажите новое значение:',
         reply_markup=get_back_admin_keyboard()
     )

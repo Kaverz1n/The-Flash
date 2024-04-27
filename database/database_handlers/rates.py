@@ -18,7 +18,7 @@ async def get_rate_and_commission() -> list:
     await connection.close()
 
     try:
-        rates_data = [data for data in result[0]]
+        rates_data = [round(data, 2) for data in result[0]]
     except IndexError:
         rates_data = ['Не указан курс', 'Не указана комиссия']
 

@@ -2,7 +2,7 @@
 name = "the-flash"
 version = "0.1.0"
 description = "The telegram bot for ordering goods from the Chinese marketplace - Poizon"
-authors = ["Dmitry Kaptan dima.captan@yandex.ru"]
+authors = ["Dmitry Kaptan <dima.captan@yandex.ru>"]
 readme = "README.md"
 packages = [{include = "the_flash"}]
 

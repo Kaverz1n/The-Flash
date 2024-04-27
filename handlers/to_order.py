@@ -318,7 +318,7 @@ async def confirm_order(callback: CallbackQuery, state: FSMContext, bot: Bot) ->
         prices=[
             LabeledPrice(
                 label='⚡\u00A0Заказ с POIZON by THE FLASH\u00A0⚡',
-                amount=order_data['rub_price'] * 10
+                amount=order_data['rub_price'] * 100
             )
         ],
         max_tip_amount=500 * 100,

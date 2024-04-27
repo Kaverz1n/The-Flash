@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "the-flash"
+version = "0.1.0"
+description = "The telegram bot for ordering goods from the Chinese marketplace - Poizon"
+authors = ["Dmitry Kaptan <dima.captan@yandex.ru>"]
+readme = "README.md"
+packages = [{include = "the_flash"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+aiogram = "^3.4.1"
+python-dotenv = "^1.0.1"
+asyncpg = "^0.29.0"
+fs-cdek-api = "^1.4.1"
+openpyxl = "^3.1.2"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

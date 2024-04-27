@@ -68,6 +68,10 @@ def change_order_status_keyboard(
 ) -> InlineKeyboardMarkup:
     '''
     A keyboard for changing order status
+    :param order_status: order status
+    :param order_id: order id
+    :param user_telegram_id: user's telegram id
+    :param user_chat_telegram_id: user's chat telegram id
     '''
     builder = InlineKeyboardBuilder()
 

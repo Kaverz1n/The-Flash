@@ -1,6 +1,6 @@
 import os
 
-from aiogram import Router, F, Bot
+from aiogram import Router, F
 from aiogram.filters import CommandStart, Command
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, CallbackQuery
@@ -8,6 +8,7 @@ from asyncpg import UniqueViolationError
 
 from database.database_handlers.admin import get_admins_telegram_ids
 from database.database_handlers.users import insert_profile_data
+
 from keyboards.for_start import get_start_keyboard
 
 router = Router()

@@ -5,15 +5,20 @@ from aiogram.enums import ContentType
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery, Message, LabeledPrice, PreCheckoutQuery
 from aiogram.utils.media_group import MediaGroupBuilder
+
 from aiohttp import ClientSession, InvalidURL
 
 from database.database_handlers.orders import insert_order_data
 from database.database_handlers.rates import get_rate_and_commission
 from database.database_handlers.users import select_profile_data, select_user_pk, increase_current_orders
+
 from keyboards.for_profile import get_profile_keyboard
 from keyboards.for_start import get_return_to_menu_keyboard
-from keyboards.for_to_order import get_familiarizing_keyboard, get_start_order_keyboard, get_confirm_order_keyboard, \
+from keyboards.for_to_order import (
+    get_familiarizing_keyboard, get_start_order_keyboard, get_confirm_order_keyboard,
     get_payment_keyboard
+)
+
 from states.to_order import ToOrderState
 
 router = Router()
@@ -47,7 +52,7 @@ async def familiarized(callback: CallbackQuery, state: FSMContext) -> None:
 
     if not 'Не указан' in tuple(user_data):
         album_builder = MediaGroupBuilder(
-            caption='📦\u00A0ССЫЛКА НА ТОВАР\u00A0📦️\n\n'
+            caption='📦\u00A0<b>ССЫЛКА НА ТОВАР</b>\u00A0📦️\n\n'
                     'Пожалуйста, укажите <b>ссылку на товар с POIZON (DEWU)</b>, '
                     'который вы хотите заказать в следующем формате:\n\n'
                     '<i>https://dw4.co/t/A/XXXXXXXX</i>\n\n'
@@ -100,7 +105,7 @@ async def order_url_received(message: Message, state: FSMContext) -> None:
             await state.update_data(order_url=user_url)
 
             album_builder = MediaGroupBuilder(
-                caption='📸\u00A0ФОТО ТОВАРА\u00A0📸\n\n'
+                caption='📸\u00A0<b>ФОТО ТОВАРА</b>\u00A0📸\n\n'
                         'Пожалуйста, прикрепите текущие <b>главное фото товара с POIZON (DEWU)</b>, '
                         'который вы хотите заказать.\n\n'
                         '<i>Для корректного получения <b>фото</b>, пожалуйста, следуйте '
@@ -144,7 +149,7 @@ async def order_photo_received(message: Message, state: FSMContext) -> None:
     await state.update_data(order_photo=message.photo[-1].file_id)
 
     album_builder = MediaGroupBuilder(
-        caption='📸\u00A0РАЗМЕР ТОВАРА\u00A0📸\n\n'
+        caption='📸\u00A0<b>РАЗМЕР ТОВАРА</b>\u00A0📸\n\n'
                 'Пожалуйста, укажите необходимый <b>размер товара с POIZON (DEWU)</b>, '
                 'который вы хотите заказать.\n\n'
                 '<i>Для корректного получения <b>размера</b>, пожалуйста, следуйте '
@@ -191,7 +196,7 @@ async def order_size_received(message: Message, state: FSMContext) -> None:
     await state.update_data(order_size=message.text)
 
     album_builder = MediaGroupBuilder(
-        caption='💴\u00A0ЦЕНА ТОВАРА В ЮАНЯХ\u00A0💴\n\n'
+        caption='💴\u00A0<b>ЦЕНА ТОВАРА В ЮАНЯХ</b>\u00A0💴\n\n'
                 'Пожалуйста, укажите подходящую <b>цену товара с POIZON (DEWU)</b>, '
                 'который вы хотите заказать.\n\n'
                 '<i>Для корректного получения <b>цены</b>, пожалуйста, следуйте '
@@ -247,7 +252,7 @@ async def order_price_received(message: Message, state: FSMContext) -> None:
 
         await message.answer_photo(
             photo=order_data['order_photo'],
-            caption=f'📬\u00A0ИНФОРМАЦИЯ О ЗАКАЗЕ\u00A0📬\n\n'
+            caption=f'📬\u00A0<b>ИНФОРМАЦИЯ О ЗАКАЗЕ</b>\u00A0📬\n\n'
                     f'<b>Ссылка на товар:</b> {order_data["order_url"]}\n'
                     f'<b>Размер товара:</b> {order_data["order_size"]}\n'
                     f'<b>Цена товара в юанях:</b> {message.text} юан.\n'
@@ -302,7 +307,7 @@ async def confirm_order(callback: CallbackQuery, state: FSMContext, bot: Bot) ->
 
     await bot.send_invoice(
         chat_id=callback.from_user.id,
-        title='⚡\u00A0Заказ с POIZON by THE FLASH\u00A0⚡',
+        title='⚡Заказ с POIZON by THE FLASH⚡',
         description='Для оплаты вашего заказа, пожалуйста, воспользуйтесь соответствующей кнопкой. '
                     'После успешной оплаты ваш заказ немедленно будет передан '
                     'нашей команде для обработки!\n\n'
@@ -373,7 +378,7 @@ async def successful_payment(message: Message, state: FSMContext) -> None:
     await increase_current_orders(message.from_user.id)
 
     await message.answer(
-        text='🧾\u00A0ВАШ ЗАКАЗ ОПЛАЧЕН\u00A0🧾\n\n'
+        text='🧾\u00A0<b>ВАШ ЗАКАЗ ОПЛАЧЕН</b>\u00A0🧾\n\n'
              'Наша команда в <b>Китае</b> скоро выкупит товар с <b>POIZON (DEWU)</b> '
              'и отправит его в <b>Россию</b>. Как только товар будет отправлен из <b>Москвы</b> '
              'на ваш адрес пункта получения <b>СДЭК</b>, вы получите <b>трек-номер</b>.\n\n'

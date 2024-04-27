@@ -27,6 +27,7 @@ async def get_maintenance_mode_value() -> bool:
 async def set_maintenance_mode_value(maintenance_mode_value: bool) -> None:
     '''
     An async function to set the maintenance mode value
+    :param maintenance_mode_value: maintenance mode value
     '''
     database_data = get_database_data()
     connection = await asyncpg.connect(**database_data)

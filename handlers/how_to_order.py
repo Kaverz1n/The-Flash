@@ -18,7 +18,7 @@ async def how_to_order(callback: CallbackQuery, state: FSMContext) -> None:
 
     await callback.message.answer_video(
         video=os.getenv('HOW_TO_ORDER_VIDEO_ID'),
-        caption=f'❓КАК ЗАКАЗАТЬ?❓\n\n'
+        caption=f'❓<b>КАК ЗАКАЗАТЬ?</b>❓\n\n'
                 f'Для того чтобы <b>оформить заказ</b>, пожалуйста, перейдите в '
                 f'<b>главное меню</b> и нажмите на кнопку <b>"Оформить заказ"</b>. '
                 f'Затем следуйте <b>инструкция</b> на экране.\n\n'

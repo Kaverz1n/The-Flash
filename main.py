@@ -3,11 +3,13 @@ import logging
 import os
 
 from aiogram import Bot, Dispatcher
-
 from dotenv import load_dotenv
 
-from handlers import maintenance_mode, start, about_company, answers_to_questions, price_calculator, profile, \
-    different_handlers, to_order, how_to_order, cancel_order, admin_panel, tech_support
+from handlers import (
+    maintenance_mode, start, to_order, how_to_order, cancel_order,
+    about_company, answers_to_questions, price_calculator,
+    profile, tech_support, admin_panel, different_handlers
+)
 
 
 async def main() -> None:

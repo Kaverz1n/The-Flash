@@ -4,8 +4,10 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery, Message
 
 from database.database_handlers.rates import get_rate_and_commission
+
 from keyboards.for_back import get_back_keyboard
 from keyboards.for_start import get_return_to_menu_keyboard
+
 from states.price_calculator import PriceCalculatorState
 
 router = Router()

@@ -28,6 +28,7 @@ async def get_rate_and_commission() -> list:
 async def update_rate(rate_value: float) -> None:
     '''
     An async function to update the CNY rate
+    :param rate_value: CNY rate
     '''
     database_data = get_database_data()
     connection = await asyncpg.connect(**database_data)
@@ -43,6 +44,7 @@ async def update_rate(rate_value: float) -> None:
 async def update_commission(commission: float) -> None:
     '''
     An async function to update the service commission
+    :param commission: service commission value
     '''
     database_data = get_database_data()
     connection = await asyncpg.connect(**database_data)

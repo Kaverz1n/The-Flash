@@ -5,6 +5,7 @@ from aiogram.types import CallbackQuery
 from aiogram.utils.markdown import hide_link
 
 from database.database_handlers.rates import get_rate_and_commission
+
 from keyboards.for_back import get_back_keyboard
 
 router = Router()

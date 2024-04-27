@@ -5,6 +5,7 @@ from aiogram.utils.keyboard import InlineKeyboardBuilder
 def get_profile_keyboard(state=None) -> InlineKeyboardMarkup:
     '''
     A keyboard that consists of edit profile button and back to menu button
+    :param state: aiogram state
     '''
     buttons_data = {'Редактировать': 'edit_profile'}
 

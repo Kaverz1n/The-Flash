@@ -16,6 +16,7 @@ async def update_profile_data(
     :param user_patronymic: user's real patronymic
     :param user_phone: user's current phone
     :param delivery_address: user's current delivery address
+    :param user_telegram_id: user's telegram id
     '''
     database_data = get_database_data()
     connection = await asyncpg.connect(**database_data)
@@ -38,12 +39,16 @@ async def insert_profile_data(
 ) -> None:
     '''
     An async function to insert profile data into the users table
+    :param user_telegram_id: user's telegram id
     :param user_nickname: user's telegram nickname
     :param user_name: user's real name
     :param user_surname: user's real surname
     :param user_patronymic: user's real patronymic
     :param user_phone: user's current phone
     :param delivery_address: user's current delivery address
+    :param current_orders: user's current orders
+    :param completed_orders: user's completed orders
+    :param canceled_orders: user's canceled orders
     '''
     database_data = get_database_data()
     connection = await asyncpg.connect(**database_data)
@@ -86,7 +91,6 @@ async def select_user_pk(user_telegram_id: int) -> tuple:
     '''
     An async function to select user_pk from the users table
     :param user_telegram_id: user's telegram id
-    :return:
     '''
     database_data = get_database_data()
     connection = await asyncpg.connect(**database_data)

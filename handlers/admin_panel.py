@@ -1,26 +1,40 @@
 import os
 
-from aiogram import Router, F, Bot
+from aiogram import Bot, F, Router
 from aiogram.fsm.context import FSMContext
-from aiogram.types import CallbackQuery, Message, ReplyKeyboardRemove, FSInputFile
+from aiogram.types import CallbackQuery, FSInputFile, Message, ReplyKeyboardRemove
 
 from callback_factories.order_factory import OrderCallbackFactory
-from database.database_handlers.admin import insert_admin_data, get_admins_telegram_ids, delete_from_admins, \
-    select_admin_password, get_admins_information
+
+from database.database_handlers.admin import (
+    delete_from_admins, get_admins_information, get_admins_telegram_ids,
+    insert_admin_data, select_admin_password,
+)
 from database.database_handlers.maintenance_mode import get_maintenance_mode_value, set_maintenance_mode_value
-from database.database_handlers.orders import get_order_inf, update_order_status, get_orders_information
-from database.database_handlers.rates import get_rate_and_commission, update_rate, update_commission
-from database.database_handlers.tech_support import insert_tech_support_data, delete_from_tech_support, \
-    get_tech_support_nicknames, get_tech_support_information
+from database.database_handlers.orders import get_order_inf, get_orders_information, update_order_status
+from database.database_handlers.rates import get_rate_and_commission, update_commission, update_rate
+from database.database_handlers.tech_support import (
+    delete_from_tech_support, get_tech_support_information,
+    get_tech_support_nicknames, insert_tech_support_data,
+)
 from database.database_handlers.users import cancel_user_order
+
 from filters.tech_support_filter import NotStartWith
+
 from handlers.start import return_main_menu
-from keyboards.for_admin_panel import get_admin_panel_keyboard, get_back_admin_keyboard, get_check_orders_keyboard, \
-    change_order_status_keyboard
+
+from keyboards.for_admin_panel import (
+    change_order_status_keyboard, get_admin_panel_keyboard,
+    get_back_admin_keyboard, get_check_orders_keyboard,
+)
 from keyboards.for_back import get_back_keyboard
 from keyboards.for_start import get_return_to_menu_keyboard
-from states.admin_panel import AdminPanelState, AdminChangeRateState, AdminChangeCommissionState, AdminAddAdminState, \
-    AdminDeleteAdminState, AdminCheckOrdersState, AdminAddTechSupportState, AdminDeleteTechSupportState
+
+from states.admin_panel import (
+    AdminAddAdminState, AdminAddTechSupportState, AdminChangeCommissionState, AdminChangeRateState,
+    AdminCheckOrdersState, AdminDeleteAdminState, AdminDeleteTechSupportState, AdminPanelState,
+)
+
 from utils import create_inf_file
 
 router = Router()
@@ -32,8 +46,8 @@ async def admin_panel(callback: CallbackQuery, state: FSMContext) -> None:
     A handler for the entering to admin panel
     '''
     await callback.message.answer(
-        text='🥷\u00A0АВТОРИЗАЦИЯ\u00A0🥷\n\n'
-             'Для входа в админ панель введите пароль:',
+        text='🥷\u00A0<b>АВТОРИЗАЦИЯ</b>\u00A0🥷\n\n'
+             'Для входа в <b>админ панель</b> введите <b>пароль</b>:',
         reply_markup=get_back_keyboard()
     )
 
@@ -54,15 +68,15 @@ async def admin_password_received(message: Message, state: FSMContext) -> None:
     if message.text == admin_password:
         maintenance_mode = await get_maintenance_mode_value()
         await message.answer(
-            text='🥷\u00A0АДМИН ПАНЕЛЬ\u00A0🥷\n\n'
-                 'Вы вошли в админ панель. Что делаем сегодня: ',
+            text='🥷\u00A0<b>АДМИН ПАНЕЛЬ</b>\u00A0🥷\n\n'
+                 'Вы вошли в <b>админ панель</b>. Что делаем сегодня: ',
             reply_markup=get_admin_panel_keyboard(maintenance_mode, message.from_user.id)
         )
         await state.set_state(AdminPanelState.authorized)
     else:
         await message.answer(
             text='❌\u00A0<b>ПРОИЗОШЛА ОШИБКА</b>\u00A0❌\n\n'
-                 'Во время авторизации произошла ошибка. Пожалуйста, попробуйте еще раз:',
+                 'Во время <b>авторизации</b> произошла <b>ошибка</b>. Пожалуйста, попробуйте еще раз:',
             reply_markup=get_return_to_menu_keyboard()
         )
 
@@ -74,7 +88,7 @@ async def wrong_admin_password(message: Message) -> None:
     '''
     await message.answer(
         text='❌\u00A0<b>ПРОИЗОШЛА ОШИБКА</b>\u00A0❌\n\n'
-             'Во время авторизации произошла ошибка. Пожалуйста, попробуйте еще раз:',
+             'Во время <b>авторизации</b> произошла <b>ошибка</b>. Пожалуйста, попробуйте еще раз:',
         reply_markup=get_return_to_menu_keyboard()
     )
 
@@ -88,8 +102,8 @@ async def current_orders(message: Message, state: FSMContext) -> None:
     A handler for choosing an action with orders
     '''
     await message.answer(
-        text='📦\u00A0ВЫБЕРИТЕ ОПЦИЮ\u00A0📦\n\n'
-             'Для выполнения необходимой вам опции нажмите соответствующую кнопку:',
+        text='📦\u00A0<b>ВЫБЕРИТЕ ОПЦИЮ</b>\u00A0📦\n\n'
+             'Для выполнения <b>необходимой</b> вам <b>опции</b> нажмите соответствующую <b>кнопку</b>:',
         reply_markup=get_check_orders_keyboard()
     )
 
@@ -118,7 +132,7 @@ async def get_excel_orders_data(message: Message) -> None:
 
     await message.answer_document(
         excel_file,
-        caption='🗂️\u00A0ДАННЫЕ О ЗАКАЗАХ\u00A0🗂️\n\n'
+        caption='🗂️\u00A0<b>ДАННЫЕ О ЗАКАЗАХ</b>\u00A0🗂️\n\n'
                 'Данные предоставлены в виде <b>Excel-таблицы</b>. '
                 'Данные отсортированны по <b>статусу</b> заказа <b>"Создан"</b>.'
     )
@@ -133,7 +147,7 @@ async def get_order_data(message: Message, state: FSMContext) -> None:
     A handler for getting order data
     '''
     await message.answer(
-        text='🛒\u00A0ВЫБОР ЗАКАЗА\u00A0🛒\n\n'
+        text='🛒\u00A0<b>ВЫБОР ЗАКАЗА</b>\u00A0🛒\n\n'
              'Для выбора <b>конкретного заказа</b> укажите его <b>ID</b>: ',
         reply_markup=ReplyKeyboardRemove()
     )
@@ -155,7 +169,7 @@ async def order_id_received(message: Message) -> None:
 
         await message.answer_photo(
             photo=order_data[4],
-            caption=f'📬\u00A0ИНФОРМАЦИЯ О ЗАКАЗЕ\u00A0📬\n\n'
+            caption=f'📬\u00A0<b>ИНФОРМАЦИЯ О ЗАКАЗЕ</b>\u00A0📬\n\n'
                     f'<b>ID товара:</b> {order_data[0]}\n'
                     f'<b>Ссылка на товар:</b> {order_data[1]}\n'
                     f'<b>Цена товара в юанях:</b> {order_data[2]} юан.\n'
@@ -169,7 +183,7 @@ async def order_id_received(message: Message) -> None:
     except IndexError:
         await message.answer(
             text='❌\u00A0<b>ПРОИЗОШЛА ОШИБКА</b>\u00A0❌\n\n'
-                 'Во время поиска заказа произошла ошибка. Пожалуйста, попробуйте еще раз:'
+                 'Во время <b>поиска</b> заказа произошла <b>ошибка</b>. Пожалуйста, попробуйте еще раз:'
         )
 
 
@@ -182,12 +196,16 @@ async def wrong_order_id(message: Message) -> None:
     '''
     await message.answer(
         text='❌\u00A0<b>ПРОИЗОШЛА ОШИБКА</b>\u00A0❌\n\n'
-             'Во время поиска заказа произошла ошибка. Пожалуйста, попробуйте еще раз:'
+             'Во время <b>поиска</b> заказа произошла <b>ошибка</b>. Пожалуйста, попробуйте еще раз:'
     )
 
 
 @router.callback_query(OrderCallbackFactory.filter(F.action == 'отправить'))
-async def ship_order(callback: CallbackQuery, callback_data: OrderCallbackFactory, bot: Bot) -> None:
+async def ship_order(
+        callback: CallbackQuery,
+        callback_data: OrderCallbackFactory,
+        bot: Bot
+) -> None:
     '''
     A handler for informing about order shipment
     '''
@@ -195,7 +213,7 @@ async def ship_order(callback: CallbackQuery, callback_data: OrderCallbackFactor
 
     await bot.send_message(
         chat_id=callback_data.user_chat_telegram_id,
-        text=f'✅\u00A0ЗАКАЗ №{callback_data.order_id} ОТПРАВЛЕН\u00A0✅\n\n'
+        text=f'✅\u00A0<b>ЗАКАЗ №{callback_data.order_id} ОТПРАВЛЕН</b>\u00A0✅\n\n'
              f'Для <b>отслеживания</b> заказа воспользуйтесь сервисами '
              f'<a href="https://www.cdek.ru/">CDEK</a> или иным <b>выбраным</b> вами сервисом.'
     )
@@ -204,7 +222,11 @@ async def ship_order(callback: CallbackQuery, callback_data: OrderCallbackFactor
 
 
 @router.callback_query(OrderCallbackFactory.filter(F.action == 'отменить'))
-async def cancel_order(callback: CallbackQuery, callback_data: OrderCallbackFactory, bot: Bot):
+async def cancel_order(
+        callback: CallbackQuery,
+        callback_data: OrderCallbackFactory,
+        bot: Bot
+) -> None:
     '''
     A handler for informing about order cancellation
     '''
@@ -212,9 +234,9 @@ async def cancel_order(callback: CallbackQuery, callback_data: OrderCallbackFact
 
     await bot.send_message(
         chat_id=callback_data.user_chat_telegram_id,
-        text=f'❌\u00A0ЗАКАЗ №{callback_data.order_id} ОТМЕНЕН\u00A0❌\n\n'
-             f'Для выяснения причины отмены заказа свяжитесь '
-             f'с нашей командой поддержки, нажав соответсвующую кнопку в главном меню, или '
+        text=f'❌\u00A0<b>ЗАКАЗ №{callback_data.order_id} ОТМЕНЕН</b>\u00A0❌\n\n'
+             f'Для выяснения <b>причины</b> отмены заказа свяжитесь '
+             f'с нашей <b>командой поддержки</b>, нажав соответсвующую кнопку в главном меню, или '
              f'по указанным ниже контактам:\n\n<b>E-mail:</b> theflash@gmail.com\n'
              f'<b>Администратор:</b> @Kaverz1n'
     )
@@ -235,7 +257,7 @@ async def change_rate_admin(message: Message, state: FSMContext) -> None:
     course = (await get_rate_and_commission())[0]
 
     await message.answer(
-        text='💴\u00A0ИЗМЕНЕНИЕ КУРСА ЮАНЯ\u00A0💴\n\n'
+        text='💴\u00A0<b>ИЗМЕНЕНИЕ КУРСА ЮАНЯ</b>\u00A0💴\n\n'
              f'<b>Текущий курс юаня</b>: {round(course, 2)} руб.\n\n'
              f'Укажите новое значение:',
         reply_markup=get_back_admin_keyboard()
@@ -281,7 +303,7 @@ async def change_commission_admin(message: Message, state: FSMContext) -> None:
     commission = (await get_rate_and_commission())[1]
 
     await message.answer(
-        text='💵\u00A0ИЗМЕНЕНИЕ КОМИССИИ СЕРВИСА\u00A0💵\n\n'
+        text='💵\u00A0<b>ИЗМЕНЕНИЕ КОМИССИИ СЕРВИСА</b>\u00A0💵\n\n'
              f'<b>Текущая комиссия сервиса</b>: {round(commission, 2)} руб.\n\n'
              f'Укажите новое значение:',
         reply_markup=get_back_admin_keyboard()
@@ -334,7 +356,7 @@ async def get_excel_admin_data(message: Message) -> None:
 
     await message.answer_document(
         excel_file,
-        caption='🧑‍💼\u00A0ДАННЫЕ ОБ АДМИНАХ\u00A0🧑‍💼\n\n'
+        caption='🧑‍💼\u00A0<b>ДАННЫЕ ОБ АДМИНАХ</b>\u00A0🧑‍💼\n\n'
                 'Данные предоставлены в виде <b>Excel-таблицы</b>. '
     )
 
@@ -358,7 +380,7 @@ async def get_excel_tech_support_data(message: Message) -> None:
 
     await message.answer_document(
         excel_file,
-        caption='👨‍💼\u00A0ДАННЫЕ ОБ ТЕХПОДДЕРЖКЕ\u00A0👨‍💼‍\n\n'
+        caption='👨‍💼\u00A0<b>ДАННЫЕ ОБ ТЕХПОДДЕРЖКЕ</b>\u00A0👨‍💼‍\n\n'
                 'Данные предоставлены в виде <b>Excel-таблицы</b>. '
     )
 
@@ -372,8 +394,8 @@ async def add_telegram_id_admin(message: Message, state: FSMContext) -> None:
     A handler for adding a new admin's telegram ID
     '''
     await message.answer(
-        text='🥷\u00A0ДОБАВЛЕНИЕ АДМИНИСТРАТОРА\u00A0🥷\n\n'
-             f'Для добавления нового администратора введите его <b>телеграм ID</b>:',
+        text='🥷\u00A0<b>ДОБАВЛЕНИЕ АДМИНИСТРАТОРА</b>\u00A0🥷\n\n'
+             f'Для добавления <b>нового администратора</b> введите его <b>телеграм ID</b>:',
         reply_markup=get_back_admin_keyboard()
     )
 
@@ -391,8 +413,8 @@ async def add_password_admin(message: Message, state: FSMContext) -> None:
     await state.update_data(admin_telegram_id=int(message.text))
 
     await message.answer(
-        text='🥷\u00A0ДОБАВЛЕНИЕ АДМИНИСТРАТОРА\u00A0🥷\n\n'
-             f'Для добавления нового администратора введите его <b>пароль</b>:',
+        text='🥷\u00A0<b>ДОБАВЛЕНИЕ АДМИНИСТРАТОРА</b>\u00A0🥷\n\n'
+             f'Для добавления <b>нового администратора</b> введите его <b>пароль</b>:',
         reply_markup=get_back_admin_keyboard()
     )
 
@@ -416,6 +438,7 @@ async def wrong_add_telegram_id_admin(message: Message) -> None:
 
 @router.message(
     F.text,
+    F.text.len() <= 15,
     AdminAddAdminState.admin_password
 )
 async def admin_data_received(message: Message, state: FSMContext) -> None:
@@ -461,8 +484,8 @@ async def delete_admin(message: Message, state: FSMContext) -> None:
     A handler for deleting an admin
     '''
     await message.answer(
-        text='🧟‍\u00A0УДАЛЕНИЕ АДМИНИСТРАТОРА\u00A0🧟‍\n\n'
-             f'Для удаления администратора введите его <b>телеграм ID</b>:',
+        text='🧟‍\u00A0<b>УДАЛЕНИЕ АДМИНИСТРАТОРА</b>\u00A0🧟‍\n\n'
+             f'Для <b>удаления</b> администратора введите его <b>телеграм ID</b>:',
         reply_markup=get_back_admin_keyboard()
     )
 
@@ -537,6 +560,7 @@ async def add_tech_support(message: Message, state: FSMContext) -> None:
 @router.message(
     F.text,
     NotStartWith(),
+    F.text.len() <= 32,
     AdminAddTechSupportState.tech_support_nickname
 )
 async def teach_support_data_received(message: Message, state: FSMContext) -> None:
@@ -565,7 +589,7 @@ async def teach_support_data_received(message: Message, state: FSMContext) -> No
 @router.message(
     AdminAddTechSupportState.tech_support_nickname
 )
-async def wrong_add_tech_support_data(message: Message, state: FSMContext) -> None:
+async def wrong_add_tech_support_data(message: Message) -> None:
     '''
     A handler for wrong tech support data
     '''
@@ -596,6 +620,7 @@ async def delete_tech_support(message: Message, state: FSMContext) -> None:
 
 @router.message(
     F.text,
+    F.text.len() <= 32,
     AdminDeleteTechSupportState.tech_support_nickname
 )
 async def teach_support_data_received(message: Message, state: FSMContext) -> None:
@@ -626,7 +651,7 @@ async def teach_support_data_received(message: Message, state: FSMContext) -> No
 @router.message(
     AdminDeleteTechSupportState.tech_support_nickname
 )
-async def wrong_delete_tech_support_data(message: Message, state: FSMContext) -> None:
+async def wrong_delete_tech_support_data(message: Message) -> None:
     '''
     A handler for wrong tech support data
     '''
@@ -707,7 +732,7 @@ async def back_to_admin(callback: CallbackQuery, state: FSMContext, bot: Bot) ->
     )
 
     await callback.message.answer(
-        text='🥷\u00A0АДМИН ПАНЕЛЬ\u00A0🥷\n\n'
+        text='🥷\u00A0<b>АДМИН ПАНЕЛЬ</b>\u00A0🥷\n\n'
              'Вы можете продолжить работу в <b>админ. панели</b>, используя <b>специальные кнопки</b>.',
         reply_markup=get_admin_panel_keyboard(maintenance_mode, admin_id)
     )
@@ -732,7 +757,7 @@ async def back_to_admin(message: Message, state: FSMContext, bot: Bot) -> None:
     maintenance_mode = await get_maintenance_mode_value()
 
     await message.answer(
-        text='🥷\u00A0АДМИН ПАНЕЛЬ\u00A0🥷\n\n'
+        text='🥷\u00A0<b>АДМИН ПАНЕЛЬ<b>\u00A0🥷\n\n'
              'Вы можете продолжить работу в <b>админ. панели</b>, используя <b>специальные кнопки</b>.',
         reply_markup=get_admin_panel_keyboard(maintenance_mode, message.from_user.id)
     )

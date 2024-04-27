@@ -3,11 +3,15 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery, Message
 
 from database.database_handlers.users import select_profile_data, update_profile_data
-from keyboards.for_back import get_back_keyboard
-from keyboards.for_profile import get_profile_keyboard, get_edit_profile_keyboard, get_back_to_profile_keyboard, \
+
+from keyboards.for_profile import (
+    get_profile_keyboard, get_edit_profile_keyboard, get_back_to_profile_keyboard,
     get_back_to_edit_keyboard
+)
 from keyboards.for_start import get_return_to_menu_keyboard
+
 from states.profile import ProfileState
+
 from utils import is_correct_address
 
 router = Router()
@@ -27,7 +31,7 @@ async def profile(callback: CallbackQuery, state: FSMContext) -> None:
         profile_filling[data] = '✅' if data != 'Не указан' else '❌'
 
     await callback.message.answer(
-        text='🦹‍♀️\u00A0ВАШ ПРОФИЛЬ\u00A0🦹‍♀️\n\n'
+        text='🦹‍♀️\u00A0<b>ВАШ ПРОФИЛЬ</b>\u00A0🦹‍♀️\n\n'
              f'✅\u00A0<b>Id</b>: {user_telegram_id}\n'
              f'{profile_filling[profile_data[0]]}\u00A0<b>Имя</b>: {profile_data[0]}\n'
              f'{profile_filling[profile_data[1]]}\u00A0<b>Фамилия</b>: {profile_data[1]}\n'
@@ -67,7 +71,7 @@ async def user_name(callback: CallbackQuery, state: FSMContext) -> None:
     A handler for editing user's name
     '''
     await callback.message.answer(
-        text='✏️\u00A0РЕДАКТИРОВАНИЕ ИМЕНИ\u00A0✏️\n\n'
+        text='✏️\u00A0<b>РЕДАКТИРОВАНИЕ ИМЕНИ</b>\u00A0✏️\n\n'
              'Пожалуйста, введите Ваше <b>полное настоящее имя</b>. Оно необходимо '
              'для <b>оформления заказа</b>:',
         reply_markup=get_back_to_edit_keyboard()
@@ -351,7 +355,7 @@ async def save_profile(callback: CallbackQuery, state: FSMContext) -> None:
 
 
 @router.callback_query(F.data == 'back_to_edit_profile')
-async def back_to_edit_profile(callback: CallbackQuery, bot: Bot, state: FSMContext) -> None:
+async def back_to_edit_profile(callback: CallbackQuery, bot: Bot) -> None:
     '''
     A handler for to get back to edit the profile
     '''

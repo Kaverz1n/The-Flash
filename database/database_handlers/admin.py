@@ -18,6 +18,7 @@ async def get_admins_information() -> list:
 
     return result
 
+
 async def get_admins_telegram_ids() -> list:
     '''
     An async function to get the list of admins' telegram_ids

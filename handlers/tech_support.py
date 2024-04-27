@@ -6,6 +6,7 @@ from aiogram.types import CallbackQuery
 from aiogram.utils.markdown import hide_link
 
 from database.database_handlers.tech_support import get_tech_support_nicknames
+
 from keyboards.for_tech_support import get_support_keyboard
 
 router = Router()
@@ -20,7 +21,7 @@ async def tech_support(callback: CallbackQuery) -> None:
 
     await callback.message.answer(
         text=f'{hide_link(os.getenv("FULL_LOGO_URL"))}'
-             f'🧑‍💻\u00A0ТЕХНИЧЕСКАЯ ПОДДЕРЖКА\u00A0👩‍💻\n\n'
+             f'🧑‍💻\u00A0<b>ТЕХНИЧЕСКАЯ ПОДДЕРЖКА</b>\u00A0👩‍💻\n\n'
              f'<b>Техническая поддержка</b> - команда <b>специалистов</b>, готовых '
              f'помочь вам в решении любых <b>проблем!</b>\n\n'
              f'Перед тем, как обратиться в <b>техподдержку</b>, полезно изучить раздел с '
